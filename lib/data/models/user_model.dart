@@ -11,8 +11,8 @@ class UserModel {
   String name;
   String email;
   String role;
-  String profilePictureUrl;
-  String phoneNumber;
+  String? profilePictureUrl;
+  String? phoneNumber;
 
   UserModel({
     required this.id,

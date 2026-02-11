@@ -15,7 +15,7 @@ class TransactionModel {
   String invoiceId;
   String status;
   int totalAmount;
-  dynamic proofPaymentUrl;
+  String? proofPaymentUrl;
   DateTime orderDate;
   DateTime expiredDate;
   DateTime createdAt;

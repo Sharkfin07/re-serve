@@ -10,10 +10,10 @@ class FoodModel {
   String id;
   String name;
   String description;
-  String imageUrl;
+  String? imageUrl;
   List<String> ingredients;
   int price;
-  dynamic priceDiscount;
+  int? priceDiscount;
   int rating;
   int totalLikes;
   bool isLike;

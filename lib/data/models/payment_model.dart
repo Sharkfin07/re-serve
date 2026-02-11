@@ -10,7 +10,7 @@ String paymentModelToJson(PaymentModel data) => json.encode(data.toJson());
 class PaymentModel {
   String id;
   String name;
-  String imageUrl;
+  String? imageUrl;
 
   PaymentModel({required this.id, required this.name, required this.imageUrl});
 
