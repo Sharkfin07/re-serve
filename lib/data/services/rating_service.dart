@@ -1,5 +1,3 @@
-import 'package:dio/dio.dart';
-
 import '../models/rating_model.dart';
 import 'api_client.dart';
 import 'auth_service.dart';
@@ -20,7 +18,7 @@ class RatingService {
     final options = await _authService.authorizedHeaders();
     await _client.post(
       '/api/v1/rate-food/$foodId',
-      data: {'rating': rating, if (review != null) 'review': review},
+      data: {'rating': rating, 'review': ?review},
       options: options,
     );
   }
@@ -33,7 +31,7 @@ class RatingService {
     );
     final data = response.data?['data'];
     if (data == null || data is! List) {
-      throw Exception('Rating list tidak ditemukan');
+      throw Exception('Rating list not found');
     }
     return data
         .whereType<Map<String, dynamic>>()

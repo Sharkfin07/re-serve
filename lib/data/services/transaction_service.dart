@@ -1,5 +1,3 @@
-import 'package:dio/dio.dart';
-
 import '../models/transaction_model.dart';
 import 'api_client.dart';
 import 'auth_service.dart';

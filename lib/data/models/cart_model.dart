@@ -2,7 +2,7 @@ class CartModel {
   final String id;
   final String foodId;
   final int quantity;
-  final Map<String, dynamic>? food; // optional payload from API
+  final Map<String, dynamic>? food;
 
   CartModel({
     required this.id,

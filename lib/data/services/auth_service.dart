@@ -57,7 +57,7 @@ class AuthService {
     final body = response.data ?? {};
     final token = body['token'] ?? body['data']?['token'];
     if (token == null || token is! String || token.isEmpty) {
-      throw Exception('Token tidak ditemukan pada respons login');
+      throw Exception('Token not found at login response');
     }
 
     await _storage.write(key: _tokenKey, value: token);
@@ -107,7 +107,7 @@ class AuthService {
 
     final data = response.data?['data'];
     if (data == null || data is! Map<String, dynamic>) {
-      throw Exception('User data tidak ditemukan');
+      throw Exception('User data not found');
     }
     return UserModel.fromJson(data);
   }
@@ -121,7 +121,7 @@ class AuthService {
 
     final data = response.data?['data'];
     if (data == null || data is! List) {
-      throw Exception('Daftar user tidak ditemukan');
+      throw Exception('User list not found');
     }
 
     return data
@@ -150,7 +150,7 @@ class AuthService {
 
     final data = response.data?['data'];
     if (data == null || data is! Map<String, dynamic>) {
-      throw Exception('User data tidak ditemukan');
+      throw Exception('User data not found');
     }
     return UserModel.fromJson(data);
   }
@@ -168,7 +168,7 @@ class AuthService {
 
     final data = response.data?['data'];
     if (data == null || data is! Map<String, dynamic>) {
-      throw Exception('User data tidak ditemukan');
+      throw Exception('User data not found');
     }
     return UserModel.fromJson(data);
   }

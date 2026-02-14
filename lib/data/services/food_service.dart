@@ -18,7 +18,7 @@ class FoodService {
     );
     final data = response.data?['data'];
     if (data == null || data is! List) {
-      throw Exception('Daftar makanan tidak ditemukan');
+      throw Exception('Food list not found');
     }
     return data
         .whereType<Map<String, dynamic>>()
@@ -34,7 +34,7 @@ class FoodService {
     );
     final data = response.data?['data'];
     if (data == null || data is! List) {
-      throw Exception('Daftar like foods tidak ditemukan');
+      throw Exception('Liked food list not found');
     }
     return data
         .whereType<Map<String, dynamic>>()
@@ -50,7 +50,7 @@ class FoodService {
     );
     final data = response.data?['data'];
     if (data == null || data is! Map<String, dynamic>) {
-      throw Exception('Food tidak ditemukan');
+      throw Exception('Food not found');
     }
     return FoodModel.fromJson(data);
   }
@@ -78,7 +78,7 @@ class FoodService {
     );
     final data = response.data?['data'];
     if (data == null || data is! Map<String, dynamic>) {
-      throw Exception('Gagal membuat food');
+      throw Exception('Failed creating food');
     }
     return FoodModel.fromJson(data);
   }
@@ -107,7 +107,7 @@ class FoodService {
     );
     final data = response.data?['data'];
     if (data == null || data is! Map<String, dynamic>) {
-      throw Exception('Gagal mengubah food');
+      throw Exception('Failed to update food');
     }
     return FoodModel.fromJson(data);
   }
