@@ -10,6 +10,8 @@ void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   await dotenv.load(fileName: '.env');
+
+  // ! Temporary token
   final jwtToken = dotenv.get('JWT_TOKEN');
   final apiKey = dotenv.get("API_KEY");
 
