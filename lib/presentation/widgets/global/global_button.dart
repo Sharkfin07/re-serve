@@ -10,6 +10,7 @@ class GlobalButton extends StatelessWidget {
   final double? height;
   final String text;
   final GlobalButtonVariant variant;
+  final Widget? icon;
   const GlobalButton({
     super.key,
     this.onPressed,
@@ -17,6 +18,7 @@ class GlobalButton extends StatelessWidget {
     this.width,
     this.height,
     this.variant = GlobalButtonVariant.primary,
+    this.icon,
   });
 
   @override
@@ -37,13 +39,20 @@ class GlobalButton extends StatelessWidget {
             side: colors.border,
           ),
           elevation: variant == GlobalButtonVariant.outline ? 0 : 2,
-          textStyle: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-            fontFamily: "Outfit",
-          ),
+          textStyle:
+              Theme.of(context).textTheme.labelLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ) ??
+              const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
-        child: Text(text),
+        child: icon == null
+            ? Text(text)
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [icon!, const SizedBox(width: 12), Text(text)],
+              ),
       ),
     );
   }
@@ -54,13 +63,14 @@ class GlobalButton extends StatelessWidget {
         return _ButtonColors(
           background: AppPalette.primary,
           foreground: Colors.white,
-          // overlay: AppPalette.secondary.withValues(alpha: 0.12),
+          overlay: AppPalette.secondary.withValues(alpha: 0.12),
         );
       case GlobalButtonVariant.secondary:
         return _ButtonColors(
-          background: AppPalette.secondary,
-          foreground: Colors.white,
+          background: Colors.white,
+          foreground: AppPalette.primary,
           overlay: AppPalette.primary.withValues(alpha: 0.12),
+          border: BorderSide(color: AppPalette.primary, width: 2.0),
         );
       case GlobalButtonVariant.tertiary:
         return _ButtonColors(
@@ -71,10 +81,10 @@ class GlobalButton extends StatelessWidget {
         );
       case GlobalButtonVariant.outline:
         return _ButtonColors(
-          background: Colors.white,
-          foreground: AppPalette.primary,
+          background: const Color.fromARGB(0, 0, 0, 0),
+          foreground: Colors.white70,
           overlay: AppPalette.primary.withValues(alpha: 0.05),
-          border: BorderSide(color: AppPalette.primary, width: 1.4),
+          border: BorderSide(color: Colors.white70, width: 1.4),
         );
     }
   }
