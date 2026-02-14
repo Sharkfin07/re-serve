@@ -5,10 +5,11 @@ import 'package:dio/dio.dart';
 import 'api_client.dart';
 import 'auth_service.dart';
 
+// TODO: Mechanism of uploading a image file?
 class UploadService {
   UploadService({ApiClient? client, AuthService? authService})
-      : _client = client ?? ApiClient.instance(),
-        _authService = authService ?? AuthService();
+    : _client = client ?? ApiClient.instance(),
+      _authService = authService ?? AuthService();
 
   final ApiClient _client;
   final AuthService _authService;

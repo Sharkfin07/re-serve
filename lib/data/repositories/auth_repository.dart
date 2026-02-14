@@ -2,6 +2,7 @@ import '../models/user_model.dart';
 import '../services/auth_service.dart';
 import '../services/api_client.dart';
 
+// TODO: Repository specific features?
 class AuthRepository {
   AuthRepository({AuthService? authService, ApiClient? apiClient})
     : _authService = authService ?? AuthService(),
