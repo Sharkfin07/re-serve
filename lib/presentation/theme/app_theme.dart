@@ -57,7 +57,7 @@ class AppTheme {
       primary: AppPalette.primary,
       secondary: AppPalette.secondary,
       surface: AppPalette.dark,
-      onPrimary: AppPalette.tertiaryLight,
+      onPrimary: Colors.white,
       onSecondary: AppPalette.dark,
       onSurface: Colors.white,
     );
