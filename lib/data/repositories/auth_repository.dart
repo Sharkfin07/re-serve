@@ -14,6 +14,26 @@ class AuthRepository {
     return _authService.login(email: email, password: password);
   }
 
+  Future<Map<String, dynamic>> register({
+    required String name,
+    required String email,
+    required String password,
+    required String passwordRepeat,
+    required String role,
+    String? profilePictureUrl,
+    String? phoneNumber,
+  }) {
+    return _authService.register(
+      name: name,
+      email: email,
+      password: password,
+      passwordRepeat: passwordRepeat,
+      role: role,
+      profilePictureUrl: profilePictureUrl,
+      phoneNumber: phoneNumber,
+    );
+  }
+
   Future<void> logout() => _authService.logout();
 
   Future<bool> isLoggedIn() => _authService.isLoggedIn();
