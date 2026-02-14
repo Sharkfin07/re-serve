@@ -83,7 +83,7 @@ class GlobalButton extends StatelessWidget {
         return _ButtonColors(
           background: const Color.fromARGB(0, 0, 0, 0),
           foreground: Colors.white70,
-          overlay: AppPalette.primary.withValues(alpha: 0.05),
+          overlay: AppPalette.dark.withValues(alpha: 0.05),
           border: BorderSide(color: Colors.white70, width: 1.4),
         );
     }
