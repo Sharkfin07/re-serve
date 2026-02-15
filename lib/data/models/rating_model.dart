@@ -1,5 +1,3 @@
-// TODO: Problem: review string not saved
-
 class RatingModel {
   final String? id;
   final String? foodId;
