@@ -48,3 +48,5 @@ flutter:
           weight: 900
   assets:
     - .env
+    - assets/images/
+    - assets/images/onboarding/
