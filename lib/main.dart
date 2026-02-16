@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:re_serve/presentation/screen/onboarding/onboarding_screen.dart';
+import 'package:re_serve/presentation/widgets/global/global_logo.dart';
 import 'presentation/theme/app_theme.dart';
 
 void main() {
