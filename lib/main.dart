@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:re_serve/core/config/env_config.dart';
 import 'package:re_serve/presentation/bloc/auth/auth_bloc.dart';
 import 'package:re_serve/presentation/bloc/auth/auth_event.dart';
 import 'package:re_serve/presentation/bloc/auth/auth_state.dart';
@@ -9,7 +10,9 @@ import 'package:re_serve/presentation/screen/auth/register_screen.dart';
 import 'package:re_serve/presentation/screen/onboarding/onboarding_screen.dart';
 import 'presentation/theme/app_theme.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EnvConfig.load();
   runApp(const MainApp());
 }
 
@@ -43,7 +46,6 @@ class MainApp extends StatelessWidget {
               case AuthStatus.unauthenticated:
               case AuthStatus.failure:
               case AuthStatus.initial:
-              default:
                 return const OnboardingScreen();
             }
           },

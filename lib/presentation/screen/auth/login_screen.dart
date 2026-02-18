@@ -4,7 +4,6 @@ import 'package:re_serve/presentation/bloc/auth/auth_bloc.dart';
 import 'package:re_serve/presentation/bloc/auth/auth_event.dart';
 import 'package:re_serve/presentation/bloc/auth/auth_state.dart';
 import 'package:re_serve/presentation/widgets/auth/auth_header.dart';
-import 'package:re_serve/presentation/widgets/auth/auth_social_button.dart';
 import 'package:re_serve/presentation/widgets/auth/auth_tab_switcher.dart';
 import 'package:re_serve/presentation/widgets/global/global_button.dart';
 import 'package:re_serve/presentation/widgets/global/global_input.dart';
