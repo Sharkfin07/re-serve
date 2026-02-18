@@ -65,7 +65,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     variant: GlobalButtonVariant.secondary,
                     onPressed: () {
                       if (isLastPage) {
-                        // TODO: navigate to login/home
+                        Navigator.pushReplacementNamed(context, '/login');
                         return;
                       }
                       _controller.nextPage(

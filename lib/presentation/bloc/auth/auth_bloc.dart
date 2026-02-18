@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:re_serve/bloc/auth/auth_event.dart';
-import 'package:re_serve/bloc/auth/auth_state.dart';
+import 'package:re_serve/presentation/bloc/auth/auth_event.dart';
+import 'package:re_serve/presentation/bloc/auth/auth_state.dart';
 import 'package:re_serve/data/repositories/auth_repository.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
@@ -9,6 +9,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       super(const AuthState()) {
     on<AuthCheckRequested>(_onCheckRequested);
     on<AuthLoginRequested>(_onLoginRequested);
+    on<AuthRegisterRequested>(_onRegisterRequested);
     on<AuthLogoutRequested>(_onLogoutRequested);
     on<AuthRefreshUserRequested>(_onRefreshUserRequested);
   }
@@ -46,6 +47,33 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(state.copyWith(status: AuthStatus.loading, errorMessage: null));
     try {
+      await _authRepository.login(email: event.email, password: event.password);
+      final user = await _authRepository.fetchCurrentUser();
+      emit(state.copyWith(status: AuthStatus.authenticated, user: user));
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: AuthStatus.failure,
+          errorMessage: e.toString(),
+          user: null,
+        ),
+      );
+    }
+  }
+
+  Future<void> _onRegisterRequested(
+    AuthRegisterRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(state.copyWith(status: AuthStatus.loading, errorMessage: null));
+    try {
+      await _authRepository.register(
+        name: event.name,
+        email: event.email,
+        password: event.password,
+        passwordRepeat: event.passwordRepeat,
+        role: 'user',
+      );
       await _authRepository.login(email: event.email, password: event.password);
       final user = await _authRepository.fetchCurrentUser();
       emit(state.copyWith(status: AuthStatus.authenticated, user: user));
