@@ -1,11 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import '../../core/config/env_config.dart';
 
 class ApiClient {
   ApiClient._internal()
     : _dio = Dio(
         BaseOptions(
-          baseUrl: 'https://api-bootcamp.do.dibimbing.id',
+          baseUrl: EnvConfig.baseUrl,
           connectTimeout: const Duration(seconds: 10),
           receiveTimeout: const Duration(seconds: 20),
           sendTimeout: const Duration(seconds: 20),

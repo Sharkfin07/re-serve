@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../models/user_model.dart';
+import '../../core/config/env_config.dart';
 
 import 'api_client.dart';
 
@@ -16,7 +16,7 @@ class AuthService {
   final ApiClient _client;
   final FlutterSecureStorage _storage;
 
-  String get _apiKey => dotenv.env['API_KEY'] ?? '';
+  String get _apiKey => EnvConfig.apiKey;
 
   Future<Map<String, dynamic>> register({
     required String name,
