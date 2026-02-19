@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:re_serve/presentation/bloc/cart/cart_bloc.dart';
 
 import 'package:re_serve/presentation/bloc/food/food_bloc.dart';
 import 'package:re_serve/presentation/bloc/food/food_event.dart';
 import 'package:re_serve/presentation/bloc/food/food_state.dart';
+import 'package:re_serve/presentation/screen/cart/cart_screen.dart';
 import 'package:re_serve/presentation/widgets/food/food_card.dart';
 import 'package:re_serve/presentation/widgets/global/global_input.dart';
 import 'package:re_serve/presentation/screen/food/food_detail_screen.dart';
@@ -44,7 +46,17 @@ class _ExploreScreenState extends State<ExploreScreen> {
           IconButton(
             icon: const Icon(Icons.shopping_bag_outlined),
             onPressed: () {
-              // TODO: Navigate to cart
+              final cartBloc = context.read<CartBloc>();
+              if (!mounted) return;
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => BlocProvider.value(
+                    value: cartBloc,
+                    child: const CartScreen(),
+                  ),
+                ),
+              );
             },
           ),
         ],

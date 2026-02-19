@@ -28,3 +28,16 @@ class FoodSearchRequested extends FoodEvent {
   @override
   List<Object?> get props => [query];
 }
+
+class FoodLikeToggleRequested extends FoodEvent {
+  final String foodId;
+  final bool currentLikeStatus;
+
+  const FoodLikeToggleRequested({
+    required this.foodId,
+    required this.currentLikeStatus,
+  });
+
+  @override
+  List<Object?> get props => [foodId, currentLikeStatus];
+}

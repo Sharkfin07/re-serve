@@ -14,7 +14,7 @@ class FoodModel {
   List<String> ingredients;
   int price;
   int? priceDiscount;
-  int rating;
+  double rating;
   int totalLikes;
   bool isLike;
 
@@ -41,7 +41,7 @@ class FoodModel {
         : [],
     price: json["price"] ?? 0,
     priceDiscount: json["priceDiscount"],
-    rating: json["rating"] ?? 0,
+    rating: (json["rating"] as num?)?.toDouble() ?? 0.0,
     totalLikes: json["totalLikes"] ?? 0,
     isLike: json["isLike"] ?? false,
   );

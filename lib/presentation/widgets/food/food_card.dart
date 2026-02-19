@@ -5,11 +5,7 @@ class FoodCard extends StatelessWidget {
   final FoodModel food;
   final VoidCallback onTap;
 
-  const FoodCard({
-    super.key,
-    required this.food,
-    required this.onTap,
-  });
+  const FoodCard({super.key, required this.food, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +48,7 @@ class FoodCard extends StatelessWidget {
                     ),
             ),
             const SizedBox(width: 12),
-            
+
             // Food Info
             Expanded(
               child: Column(
@@ -72,10 +68,7 @@ class FoodCard extends StatelessWidget {
                     children: [
                       if (hasDiscount) ...[
                         Text(
-                          'Rp${food.price.toString().replaceAllMapped(
-                                RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-                                (Match m) => '${m[1]}.',
-                              )}',
+                          'Rp${food.price.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}',
                           style: theme.textTheme.bodySmall?.copyWith(
                             decoration: TextDecoration.lineThrough,
                             color: Colors.grey,
@@ -84,10 +77,7 @@ class FoodCard extends StatelessWidget {
                         const SizedBox(width: 8),
                       ],
                       Text(
-                        'Rp${(food.priceDiscount ?? food.price).toString().replaceAllMapped(
-                              RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-                              (Match m) => '${m[1]}.',
-                            )}',
+                        'Rp${(food.priceDiscount ?? food.price).toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}',
                         style: theme.textTheme.titleSmall?.copyWith(
                           color: const Color(0xFFFF6B6B),
                           fontWeight: FontWeight.bold,
@@ -98,11 +88,11 @@ class FoodCard extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Arrow Icon
             Icon(
               Icons.chevron_right,
-              color: theme.colorScheme.onSurface.withOpacity(0.5),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
             ),
           ],
         ),

@@ -3,6 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:re_serve/presentation/bloc/food/food_bloc.dart';
 import 'package:re_serve/presentation/bloc/food/food_event.dart';
 import 'package:re_serve/presentation/bloc/food/food_state.dart';
+import 'package:re_serve/presentation/bloc/cart/cart_bloc.dart';
+import 'package:re_serve/presentation/bloc/cart/cart_event.dart';
+import 'package:re_serve/presentation/bloc/rating/rating_bloc.dart';
+import 'package:re_serve/presentation/screen/cart/cart_screen.dart';
+import 'package:re_serve/presentation/widgets/rating/rating_dialog.dart';
 import 'package:re_serve/data/models/food_model.dart';
 
 class FoodDetailScreen extends StatefulWidget {
@@ -145,7 +150,17 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
                                     color: Colors.black,
                                   ),
                                   onPressed: () {
-                                    // TODO: Navigate to cart
+                                    final cartBloc = context.read<CartBloc>();
+                                    if (!mounted) return;
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => BlocProvider.value(
+                                          value: cartBloc,
+                                          child: const CartScreen(),
+                                        ),
+                                      ),
+                                    );
                                   },
                                 ),
                               ),
@@ -230,13 +245,21 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
                         children: [
                           ...List.generate(5, (index) {
                             return Icon(
-                              index < food.rating
+                              index < food.rating.round()
                                   ? Icons.star
                                   : Icons.star_border,
                               color: const Color(0xFFFF6B6B),
                               size: 24,
                             );
                           }),
+                          const SizedBox(width: 8),
+                          Text(
+                            food.rating.toStringAsFixed(1),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 24),
@@ -248,6 +271,43 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
                           height: 1.6,
                           color: theme.colorScheme.onSurface.withValues(
                             alpha: 0.7,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Rate this food button
+                      OutlinedButton.icon(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (_) => MultiBlocProvider(
+                              providers: [
+                                BlocProvider.value(
+                                  value: context.read<RatingBloc>(),
+                                ),
+                                BlocProvider.value(
+                                  value: context.read<FoodBloc>(),
+                                ),
+                              ],
+                              child: RatingDialog(
+                                foodId: food.id,
+                                foodName: food.name,
+                              ),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.star_outline),
+                        label: const Text('Rate this food'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xFFE74C3C),
+                          side: const BorderSide(color: Color(0xFFE74C3C)),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 24,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                       ),
@@ -283,9 +343,14 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      // TODO: Add to cart
+                      context.read<CartBloc>().add(CartAddRequested(food.id));
+                      ScaffoldMessenger.of(context).clearSnackBars();
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Added to cart!')),
+                        SnackBar(
+                          content: Text('${food.name} added to cart!'),
+                          duration: const Duration(seconds: 2),
+                          behavior: SnackBarBehavior.floating,
+                        ),
                       );
                     },
                     style: ElevatedButton.styleFrom(
@@ -315,19 +380,18 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
                 const SizedBox(width: 12),
                 FloatingActionButton(
                   onPressed: () {
-                    // TODO: Toggle favorite
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          food.isLike
-                              ? 'Unliked ${food.name}'
-                              : 'Liked ${food.name}',
-                        ),
+                    context.read<FoodBloc>().add(
+                      FoodLikeToggleRequested(
+                        foodId: food.id,
+                        currentLikeStatus: food.isLike,
                       ),
                     );
                   },
                   backgroundColor: const Color(0xFFFF6B6B),
-                  child: const Icon(Icons.favorite, color: Colors.white),
+                  child: Icon(
+                    food.isLike ? Icons.favorite : Icons.favorite_border,
+                    color: Colors.white,
+                  ),
                 ),
               ],
             ),

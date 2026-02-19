@@ -10,6 +10,7 @@ class FoodBloc extends Bloc<FoodEvent, FoodState> {
     on<FoodFetchRequested>(_onFoodFetchRequested);
     on<FoodDetailFetchRequested>(_onFoodDetailFetchRequested);
     on<FoodSearchRequested>(_onFoodSearchRequested);
+    on<FoodLikeToggleRequested>(_onFoodLikeToggleRequested);
   }
 
   final FoodRepository _foodRepository;
@@ -67,6 +68,43 @@ class FoodBloc extends Bloc<FoodEvent, FoodState> {
                 .toList();
 
       emit(state.copyWith(status: FoodStatus.success, foods: filteredFoods));
+    } catch (e) {
+      emit(
+        state.copyWith(status: FoodStatus.failure, errorMessage: e.toString()),
+      );
+    }
+  }
+
+  Future<void> _onFoodLikeToggleRequested(
+    FoodLikeToggleRequested event,
+    Emitter<FoodState> emit,
+  ) async {
+    try {
+      // Call like or unlike based on current status
+      if (event.currentLikeStatus) {
+        await _foodRepository.unlikeFood(event.foodId);
+      } else {
+        await _foodRepository.likeFood(event.foodId);
+      }
+
+      // Refresh the food detail to get updated like status
+      final updatedFood = await _foodRepository.getFoodById(event.foodId);
+
+      // Update the foods list if current food is in the list
+      final updatedFoods = state.foods.map((food) {
+        if (food.id == event.foodId) {
+          return updatedFood;
+        }
+        return food;
+      }).toList();
+
+      emit(
+        state.copyWith(
+          status: FoodStatus.success,
+          selectedFood: updatedFood,
+          foods: updatedFoods,
+        ),
+      );
     } catch (e) {
       emit(
         state.copyWith(status: FoodStatus.failure, errorMessage: e.toString()),
