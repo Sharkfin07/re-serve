@@ -32,16 +32,18 @@ class FoodModel {
   });
 
   factory FoodModel.fromJson(Map<String, dynamic> json) => FoodModel(
-    id: json["id"],
-    name: json["name"],
-    description: json["description"],
+    id: json["id"] ?? '',
+    name: json["name"] ?? '',
+    description: json["description"] ?? '',
     imageUrl: json["imageUrl"],
-    ingredients: List<String>.from(json["ingredients"].map((x) => x)),
-    price: json["price"],
+    ingredients: json["ingredients"] != null 
+        ? List<String>.from(json["ingredients"].map((x) => x))
+        : [],
+    price: json["price"] ?? 0,
     priceDiscount: json["priceDiscount"],
-    rating: json["rating"],
-    totalLikes: json["totalLikes"],
-    isLike: json["isLike"],
+    rating: json["rating"] ?? 0,
+    totalLikes: json["totalLikes"] ?? 0,
+    isLike: json["isLike"] ?? false,
   );
 
   Map<String, dynamic> toJson() => {

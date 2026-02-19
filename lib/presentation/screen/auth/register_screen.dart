@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:re_serve/presentation/bloc/auth/auth_bloc.dart';
 import 'package:re_serve/presentation/bloc/auth/auth_event.dart';
 import 'package:re_serve/presentation/bloc/auth/auth_state.dart';
+import 'package:re_serve/presentation/bloc/food/food_bloc.dart';
+import 'package:re_serve/presentation/screen/explore/exploration.dart';
 import 'package:re_serve/presentation/widgets/auth/auth_header.dart';
 import 'package:re_serve/presentation/widgets/auth/auth_tab_switcher.dart';
 import 'package:re_serve/presentation/widgets/global/global_button.dart';
@@ -42,6 +44,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final foodBloc = context.read<FoodBloc>();
+    
     return Scaffold(
       body: SafeArea(
         child: BlocConsumer<AuthBloc, AuthState>(
@@ -53,7 +57,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
             }
             if (state.status == AuthStatus.authenticated) {
-              Navigator.pushReplacementNamed(context, '/home');
+              if (!mounted) return;
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => BlocProvider.value(
+                    value: foodBloc,
+                    child: const ExploreScreen(),
+                  ),
+                ),
+                (route) => false,
+              );
             }
           },
           builder: (context, state) {

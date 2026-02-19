@@ -47,7 +47,7 @@ class AuthRepository {
       options: options,
     );
 
-    final data = response.data?['data'];
+    final data = response.data?['user'];
     if (data == null || data is! Map<String, dynamic>) {
       throw Exception("User data not found");
     }
