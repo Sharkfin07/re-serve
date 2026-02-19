@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:re_serve/data/models/food_model.dart';
 
 class FoodCard extends StatelessWidget {
@@ -26,12 +27,20 @@ class FoodCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: food.imageUrl != null
-                  ? Image.network(
-                      food.imageUrl!,
+                  ? CachedNetworkImage(
+                      imageUrl: food.imageUrl!,
                       width: 70,
                       height: 70,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
+                      placeholder: (context, url) {
+                        return Container(
+                          width: 70,
+                          height: 70,
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.restaurant, size: 32),
+                        );
+                      },
+                      errorWidget: (context, url, error) {
                         return Container(
                           width: 70,
                           height: 70,

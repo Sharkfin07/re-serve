@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:re_serve/data/models/cart_model.dart';
 
 class CartItemCard extends StatelessWidget {
@@ -45,12 +46,23 @@ class CartItemCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: imageUrl != null && imageUrl.isNotEmpty
-                ? Image.network(
-                    imageUrl,
+                ? CachedNetworkImage(
+                    imageUrl: imageUrl,
                     width: 70,
                     height: 70,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
+                    placeholder: (context, url) {
+                      return Container(
+                        width: 70,
+                        height: 70,
+                        color: Colors.grey[200],
+                        child: const Icon(
+                          Icons.fastfood,
+                          color: Colors.grey,
+                        ),
+                      );
+                    },
+                    errorWidget: (context, url, error) {
                       return Container(
                         width: 70,
                         height: 70,

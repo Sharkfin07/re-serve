@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:re_serve/presentation/bloc/food/food_bloc.dart';
 import 'package:re_serve/presentation/bloc/food/food_event.dart';
 import 'package:re_serve/presentation/bloc/food/food_state.dart';
@@ -83,12 +84,20 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
                 children: [
                   // Food Image
                   food.imageUrl != null
-                      ? Image.network(
-                          food.imageUrl!,
+                      ? CachedNetworkImage(
+                          imageUrl: food.imageUrl!,
                           height: 280,
                           width: double.infinity,
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
+                          placeholder: (context, url) {
+                            return Container(
+                              height: 280,
+                              width: double.infinity,
+                              color: Colors.grey[300],
+                              child: const Icon(Icons.restaurant, size: 64),
+                            );
+                          },
+                          errorWidget: (context, url, error) {
                             return Container(
                               height: 280,
                               width: double.infinity,
