@@ -47,10 +47,24 @@ class AuthRepository {
       options: options,
     );
 
-    final data = response.data?['data'];
+    final data = response.data?['user'];
     if (data == null || data is! Map<String, dynamic>) {
       throw Exception("User data not found");
     }
     return UserModel.fromJson(data);
+  }
+
+  Future<UserModel> updateProfile({
+    required String name,
+    required String email,
+    String? profilePictureUrl,
+    String? phoneNumber,
+  }) {
+    return _authService.updateProfile(
+      name: name,
+      email: email,
+      profilePictureUrl: profilePictureUrl,
+      phoneNumber: phoneNumber,
+    );
   }
 }

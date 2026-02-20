@@ -12,6 +12,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthRegisterRequested>(_onRegisterRequested);
     on<AuthLogoutRequested>(_onLogoutRequested);
     on<AuthRefreshUserRequested>(_onRefreshUserRequested);
+    on<AuthUpdateProfileRequested>(_onUpdateProfileRequested);
   }
 
   final AuthRepository _authRepository;
@@ -122,6 +123,27 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           errorMessage: e.toString(),
           user: null,
         ),
+      );
+    }
+  }
+
+  Future<void> _onUpdateProfileRequested(
+    AuthUpdateProfileRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(state.copyWith(status: AuthStatus.loading, errorMessage: null));
+    try {
+      await _authRepository.updateProfile(
+        name: event.name,
+        email: event.email,
+        profilePictureUrl: event.profilePictureUrl,
+        phoneNumber: event.phoneNumber,
+      );
+      final user = await _authRepository.fetchCurrentUser();
+      emit(state.copyWith(status: AuthStatus.authenticated, user: user));
+    } catch (e) {
+      emit(
+        state.copyWith(status: AuthStatus.failure, errorMessage: e.toString()),
       );
     }
   }
