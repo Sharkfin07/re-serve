@@ -11,6 +11,7 @@ class FoodBloc extends Bloc<FoodEvent, FoodState> {
     on<FoodDetailFetchRequested>(_onFoodDetailFetchRequested);
     on<FoodSearchRequested>(_onFoodSearchRequested);
     on<FoodLikeToggleRequested>(_onFoodLikeToggleRequested);
+    on<FoodLikedFetchRequested>(_onFoodLikedFetchRequested);
   }
 
   final FoodRepository _foodRepository;
@@ -105,6 +106,21 @@ class FoodBloc extends Bloc<FoodEvent, FoodState> {
           foods: updatedFoods,
         ),
       );
+    } catch (e) {
+      emit(
+        state.copyWith(status: FoodStatus.failure, errorMessage: e.toString()),
+      );
+    }
+  }
+
+  Future<void> _onFoodLikedFetchRequested(
+    FoodLikedFetchRequested event,
+    Emitter<FoodState> emit,
+  ) async {
+    emit(state.copyWith(status: FoodStatus.loading, errorMessage: null));
+    try {
+      final likedFoods = await _foodRepository.getLikedFoods();
+      emit(state.copyWith(status: FoodStatus.success, likedFoods: likedFoods));
     } catch (e) {
       emit(
         state.copyWith(status: FoodStatus.failure, errorMessage: e.toString()),

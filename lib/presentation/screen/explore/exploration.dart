@@ -5,6 +5,7 @@ import 'package:re_serve/presentation/bloc/cart/cart_bloc.dart';
 import 'package:re_serve/presentation/bloc/food/food_bloc.dart';
 import 'package:re_serve/presentation/bloc/food/food_event.dart';
 import 'package:re_serve/presentation/bloc/food/food_state.dart';
+import 'package:re_serve/presentation/screen/account/account_screen.dart';
 import 'package:re_serve/presentation/screen/cart/cart_screen.dart';
 import 'package:re_serve/presentation/widgets/food/food_card.dart';
 import 'package:re_serve/presentation/widgets/global/global_input.dart';
@@ -55,6 +56,18 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     value: cartBloc,
                     child: const CartScreen(),
                   ),
+                ),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.person_outline),
+            onPressed: () {
+              if (!mounted) return;
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const AccountScreen(),
                 ),
               );
             },

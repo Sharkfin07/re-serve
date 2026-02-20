@@ -8,10 +8,13 @@ import 'package:re_serve/presentation/bloc/food/food_bloc.dart';
 import 'package:re_serve/presentation/bloc/food/food_event.dart';
 import 'package:re_serve/presentation/bloc/cart/cart_bloc.dart';
 import 'package:re_serve/presentation/bloc/rating/rating_bloc.dart';
+import 'package:re_serve/presentation/bloc/transaction/transaction_bloc.dart';
 import 'package:re_serve/data/repositories/auth_repository.dart';
 import 'package:re_serve/data/repositories/food_repository.dart';
 import 'package:re_serve/data/repositories/cart_repository.dart';
 import 'package:re_serve/data/repositories/rating_repository.dart';
+import 'package:re_serve/data/repositories/payment_repository.dart';
+import 'package:re_serve/data/repositories/transaction_repository.dart';
 import 'package:re_serve/presentation/screen/auth/login_screen.dart';
 import 'package:re_serve/presentation/screen/auth/register_screen.dart';
 import 'package:re_serve/presentation/screen/explore/exploration.dart';
@@ -46,6 +49,12 @@ class MainApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => RatingBloc(ratingRepository: RatingRepository()),
+        ),
+        BlocProvider(
+          create: (_) => TransactionBloc(
+            transactionRepository: TransactionRepository(),
+            paymentRepository: PaymentRepository(),
+          ),
         ),
       ],
       child: MaterialApp(

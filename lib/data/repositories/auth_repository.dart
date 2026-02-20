@@ -53,4 +53,18 @@ class AuthRepository {
     }
     return UserModel.fromJson(data);
   }
+
+  Future<UserModel> updateProfile({
+    required String name,
+    required String email,
+    String? profilePictureUrl,
+    String? phoneNumber,
+  }) {
+    return _authService.updateProfile(
+      name: name,
+      email: email,
+      profilePictureUrl: profilePictureUrl,
+      phoneNumber: phoneNumber,
+    );
+  }
 }

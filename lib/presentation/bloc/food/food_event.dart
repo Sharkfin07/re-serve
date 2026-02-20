@@ -41,3 +41,7 @@ class FoodLikeToggleRequested extends FoodEvent {
   @override
   List<Object?> get props => [foodId, currentLikeStatus];
 }
+
+class FoodLikedFetchRequested extends FoodEvent {
+  const FoodLikedFetchRequested();
+}

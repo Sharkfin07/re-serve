@@ -4,23 +4,27 @@ import 'package:re_serve/presentation/theme/app_palette.dart';
 class GlobalInput extends StatelessWidget {
   final TextEditingController? controller;
   final String? hintText;
+  final String? label;
   final Widget? prefixIcon;
   final bool obscureText;
   final TextInputType keyboardType;
   final TextInputAction? textInputAction;
   final FocusNode? focusNode;
   final ValueChanged<String>? onChanged;
+  final String? Function(String?)? validator;
 
   const GlobalInput({
     super.key,
     this.controller,
     this.hintText,
+    this.label,
     this.prefixIcon,
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
     this.textInputAction,
     this.focusNode,
     this.onChanged,
+    this.validator,
   });
 
   @override
@@ -35,6 +39,7 @@ class GlobalInput extends StatelessWidget {
       obscureText: obscureText,
       keyboardType: keyboardType,
       textInputAction: textInputAction,
+      validator: validator,
       style:
           Theme.of(
             context,
@@ -42,6 +47,7 @@ class GlobalInput extends StatelessWidget {
           TextStyle(color: scheme.onSurface),
       decoration: InputDecoration(
         hintText: hintText,
+        labelText: label,
         hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
           color: scheme.onSurface.withValues(alpha: 0.6),
         ),

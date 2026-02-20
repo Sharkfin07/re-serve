@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:re_serve/presentation/bloc/cart/cart_bloc.dart';
 import 'package:re_serve/presentation/bloc/cart/cart_event.dart';
 import 'package:re_serve/presentation/bloc/cart/cart_state.dart';
+import 'package:re_serve/presentation/screen/checkout/checkout_screen.dart';
 import 'package:re_serve/presentation/widgets/cart/cart_item_card.dart';
 
 class CartScreen extends StatefulWidget {
@@ -178,11 +179,12 @@ class _CartScreenState extends State<CartScreen> {
                         height: 50,
                         child: ElevatedButton(
                           onPressed: () {
-                            // TODO: Implement checkout functionality
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Checkout functionality coming soon!',
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => CheckoutScreen(
+                                  cartItems: state.cartItems,
+                                  totalPrice: state.totalPrice,
                                 ),
                               ),
                             );
