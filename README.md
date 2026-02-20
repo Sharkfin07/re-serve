@@ -64,6 +64,10 @@ These are loaded via `EnvConfig` in [lib/core/config/env_config.dart](lib/core/c
 flutter run
 ```
 
+## Demo
+
+https://github.com/user-attachments/assets/edcf8181-1d10-47c5-981b-73ec8e66b3ff
+
 ## Notes
 
 - Link to Pitch Deck: [Canva Link](https://www.canva.com/design/DAHByV5-IUs/uLtWsx4o9Mu8hfxlqKlA2Q/edit?utm_content=DAHByV5-IUs&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
