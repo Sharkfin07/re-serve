@@ -55,21 +55,17 @@ class TransactionService {
         .toList();
   }
 
-  Future<TransactionModel> createTransaction({
+  Future<void> createTransaction({
     required List<String> cartIds,
     required String paymentMethodId,
   }) async {
     final options = await _authService.authorizedHeaders();
-    final response = await _client.post<Map<String, dynamic>>(
+    await _client.post<Map<String, dynamic>>(
       '/api/v1/create-transaction',
       data: {'cartIds': cartIds, 'paymentMethodId': paymentMethodId},
       options: options,
     );
-    final data = response.data?['data'];
-    if (data == null || data is! Map<String, dynamic>) {
-      throw Exception('Failed to create transaction');
-    }
-    return TransactionModel.fromJson(data);
+    // Ternyata, gaada response data cui ;)
   }
 
   Future<void> cancelTransaction(String transactionId) async {
