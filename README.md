@@ -66,6 +66,7 @@ flutter run
 
 ## Notes
 
+- Link to Pitch Deck: [Canva Link](https://www.canva.com/design/DAHByV5-IUs/uLtWsx4o9Mu8hfxlqKlA2Q/edit?utm_content=DAHByV5-IUs&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 - The checkout flow intentionally uses a mock transaction response (API returns status only).
 - Image loading uses caching with placeholders and error fallbacks.
 
