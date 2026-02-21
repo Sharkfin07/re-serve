@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:re_serve/core/utils/is_dark.dart';
 import 'package:re_serve/presentation/bloc/cart/cart_bloc.dart';
 
 import 'package:re_serve/presentation/bloc/food/food_bloc.dart';
@@ -31,19 +32,17 @@ class _ExploreScreenState extends State<ExploreScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final foodBloc = context.read<FoodBloc>();
+    final headerColor = isDark(context)
+        ? Color.fromARGB(255, 37, 48, 62)
+        : Color.fromARGB(255, 226, 235, 248);
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: theme.colorScheme.surface,
+        backgroundColor: headerColor,
         elevation: 0,
+        scrolledUnderElevation: 0,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined),
-            onPressed: () {
-              // TODO: Navigate to notifications
-            },
-          ),
           IconButton(
             icon: const Icon(Icons.shopping_bag_outlined),
             onPressed: () {
@@ -66,9 +65,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
               if (!mounted) return;
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => const AccountScreen(),
-                ),
+                MaterialPageRoute(builder: (_) => const AccountScreen()),
               );
             },
           ),
@@ -82,17 +79,27 @@ class _ExploreScreenState extends State<ExploreScreen> {
             },
             child: CustomScrollView(
               slivers: [
-                // Search Bar
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
-                  sliver: SliverToBoxAdapter(
-                    child: GlobalInput(
-                      controller: _searchController,
-                      hintText: 'Search',
-                      prefixIcon: const Icon(Icons.search),
-                      onChanged: (query) {
-                        foodBloc.add(FoodSearchRequested(query));
-                      },
+                // Search Bar (sticky)
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: _StickySearchBarDelegate(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(40),
+                          bottomRight: Radius.circular(40),
+                        ),
+                        color: headerColor,
+                      ),
+                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+                      child: GlobalInput(
+                        controller: _searchController,
+                        hintText: 'Search',
+                        prefixIcon: const Icon(Icons.search),
+                        onChanged: (query) {
+                          foodBloc.add(FoodSearchRequested(query));
+                        },
+                      ),
                     ),
                   ),
                 ),
@@ -161,4 +168,29 @@ class _ExploreScreenState extends State<ExploreScreen> {
       ),
     );
   }
+}
+
+class _StickySearchBarDelegate extends SliverPersistentHeaderDelegate {
+  _StickySearchBarDelegate({required this.child});
+
+  final Widget child;
+
+  @override
+  double get minExtent => 72;
+
+  @override
+  double get maxExtent => 72;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return child;
+  }
+
+  @override
+  bool shouldRebuild(covariant _StickySearchBarDelegate oldDelegate) =>
+      oldDelegate.child != child;
 }
