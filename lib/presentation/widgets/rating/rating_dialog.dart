@@ -82,6 +82,8 @@ class _RatingDialogState extends State<RatingDialog> {
                     children: List.generate(5, (index) {
                       return IconButton(
                         iconSize: 40,
+                        padding: const EdgeInsets.all(4),
+                        constraints: const BoxConstraints(),
                         icon: Icon(
                           index < _selectedRating
                               ? Icons.star

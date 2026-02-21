@@ -54,7 +54,7 @@ class AuthRepository {
     return UserModel.fromJson(data);
   }
 
-  Future<UserModel> updateProfile({
+  Future<void> updateProfile({
     required String name,
     required String email,
     String? profilePictureUrl,

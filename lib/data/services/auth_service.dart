@@ -130,14 +130,14 @@ class AuthService {
         .toList();
   }
 
-  Future<UserModel> updateProfile({
+  Future<void> updateProfile({
     required String name,
     required String email,
     String? profilePictureUrl,
     String? phoneNumber,
   }) async {
     final options = await authorizedHeaders();
-    final response = await _client.post<Map<String, dynamic>>(
+    await _client.post<Map<String, dynamic>>(
       '/api/v1/update-profile',
       data: {
         'name': name,
@@ -147,12 +147,6 @@ class AuthService {
       },
       options: options,
     );
-
-    final data = response.data?['data'];
-    if (data == null || data is! Map<String, dynamic>) {
-      throw Exception('User data not found');
-    }
-    return UserModel.fromJson(data);
   }
 
   Future<UserModel> updateUserRole({

@@ -1,5 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:re_serve/data/repositories/upload_repository.dart';
 import 'package:re_serve/presentation/bloc/auth/auth_bloc.dart';
 import 'package:re_serve/presentation/bloc/auth/auth_event.dart';
 import 'package:re_serve/presentation/bloc/auth/auth_state.dart';
@@ -14,20 +19,25 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _picker = ImagePicker();
+  final _uploadRepository = UploadRepository();
+
   late TextEditingController _nameController;
   late TextEditingController _emailController;
   late TextEditingController _phoneController;
-  late TextEditingController _profilePicController;
 
   bool _initialized = false;
   bool _submitting = false;
+  bool _uploading = false;
+
+  File? _pickedImage;
+  String? _currentImageUrl;
 
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
-    _profilePicController.dispose();
     super.dispose();
   }
 
@@ -37,9 +47,99 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _nameController = TextEditingController(text: user?.name ?? '');
     _emailController = TextEditingController(text: user?.email ?? '');
     _phoneController = TextEditingController(text: user?.phoneNumber ?? '');
-    _profilePicController =
-        TextEditingController(text: user?.profilePictureUrl ?? '');
+    _currentImageUrl = user?.profilePictureUrl;
     _initialized = true;
+  }
+
+  Future<void> _pickImage() async {
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.camera_alt_outlined),
+                title: const Text('Take a photo'),
+                onTap: () => Navigator.pop(ctx, ImageSource.camera),
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library_outlined),
+                title: const Text('Choose from gallery'),
+                onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (source == null) return;
+
+    final picked = await _picker.pickImage(
+      source: source,
+      maxWidth: 800,
+      maxHeight: 800,
+      imageQuality: 85,
+    );
+
+    if (picked != null) {
+      setState(() {
+        _pickedImage = File(picked.path);
+      });
+    }
+  }
+
+  Future<void> _saveProfile() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() {
+      _submitting = true;
+      _uploading = _pickedImage != null;
+    });
+
+    String? profilePicUrl = _currentImageUrl;
+
+    // Upload new image if one was picked
+    if (_pickedImage != null) {
+      try {
+        profilePicUrl = await _uploadRepository.uploadImage(_pickedImage!);
+      } catch (e) {
+        if (!mounted) return;
+        setState(() {
+          _submitting = false;
+          _uploading = false;
+        });
+        ScaffoldMessenger.of(context)
+          ..clearSnackBars()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text('Failed to upload image. Please try again.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        return;
+      }
+    }
+
+    if (!mounted) return;
+    setState(() => _uploading = false);
+
+    context.read<AuthBloc>().add(
+      AuthUpdateProfileRequested(
+        name: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        phoneNumber: _phoneController.text.trim().isEmpty
+            ? null
+            : _phoneController.text.trim(),
+        profilePictureUrl: profilePicUrl,
+      ),
+    );
   }
 
   @override
@@ -99,6 +199,73 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Profile picture
+                  Center(
+                    child: GestureDetector(
+                      onTap: (_submitting) ? null : _pickImage,
+                      child: Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: 56,
+                            backgroundColor:
+                                theme.colorScheme.surfaceContainerHighest,
+                            backgroundImage: _pickedImage != null
+                                ? FileImage(_pickedImage!)
+                                : (_currentImageUrl != null &&
+                                      _currentImageUrl!.isNotEmpty)
+                                ? CachedNetworkImageProvider(_currentImageUrl!)
+                                      as ImageProvider
+                                : null,
+                            child:
+                                (_pickedImage == null &&
+                                    (_currentImageUrl == null ||
+                                        _currentImageUrl!.isEmpty))
+                                ? Icon(
+                                    Icons.person,
+                                    size: 48,
+                                    color: theme.colorScheme.onSurface
+                                        .withValues(alpha: 0.4),
+                                  )
+                                : null,
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE74C3C),
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: theme.colorScheme.surface,
+                                  width: 2,
+                                ),
+                              ),
+                              child: const Icon(
+                                Icons.camera_alt,
+                                size: 18,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  if (_pickedImage != null)
+                    Center(
+                      child: TextButton.icon(
+                        onPressed: () {
+                          setState(() => _pickedImage = null);
+                        },
+                        icon: const Icon(Icons.close, size: 18),
+                        label: const Text('Remove selected photo'),
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: 32),
                   GlobalInput(
                     controller: _nameController,
                     label: 'Name',
@@ -136,41 +303,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     prefixIcon: const Icon(Icons.phone_outlined),
                     keyboardType: TextInputType.phone,
                   ),
-                  const SizedBox(height: 16),
-                  GlobalInput(
-                    controller: _profilePicController,
-                    label: 'Profile Picture URL',
-                    hintText: 'Enter image URL',
-                    prefixIcon: const Icon(Icons.image_outlined),
-                  ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 24),
+
                   SizedBox(
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: state.status == AuthStatus.loading
+                      onPressed:
+                          (state.status == AuthStatus.loading || _submitting)
                           ? null
-                          : () {
-                              if (_formKey.currentState!.validate()) {
-                                _submitting = true;
-                                context.read<AuthBloc>().add(
-                                  AuthUpdateProfileRequested(
-                                    name: _nameController.text.trim(),
-                                    email: _emailController.text.trim(),
-                                    phoneNumber:
-                                        _phoneController.text.trim().isEmpty
-                                            ? null
-                                            : _phoneController.text.trim(),
-                                    profilePictureUrl: _profilePicController
-                                            .text
-                                            .trim()
-                                            .isEmpty
-                                        ? null
-                                        : _profilePicController.text.trim(),
-                                  ),
-                                );
-                              }
-                            },
+                          : _saveProfile,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFE74C3C),
                         foregroundColor: Colors.white,
@@ -179,14 +321,30 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                         elevation: 0,
                       ),
-                      child: state.status == AuthStatus.loading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
+                      child: (_submitting)
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                if (_uploading) ...[
+                                  const SizedBox(width: 12),
+                                  const Text(
+                                    'Uploading photo...',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ],
                             )
                           : const Text(
                               'Save Changes',
