@@ -9,6 +9,7 @@ import 'package:re_serve/presentation/bloc/transaction/transaction_bloc.dart';
 import 'package:re_serve/presentation/screen/account/edit_profile_screen.dart';
 import 'package:re_serve/presentation/screen/account/liked_foods_screen.dart';
 import 'package:re_serve/presentation/screen/account/transaction_history_screen.dart';
+import 'package:re_serve/presentation/screen/auth/login_screen.dart';
 
 class AccountScreen extends StatelessWidget {
   const AccountScreen({super.key});
@@ -182,6 +183,13 @@ class AccountScreen extends StatelessWidget {
                                 Navigator.pop(dialogContext);
                                 context.read<AuthBloc>().add(
                                   const AuthLogoutRequested(),
+                                );
+                                Navigator.of(context).pushAndRemoveUntil(
+                                  MaterialPageRoute(
+                                    builder: (context) => LoginScreen(),
+                                  ),
+                                  (Route<dynamic> route) =>
+                                      false, // This predicate removes all routes
                                 );
                               },
                               style: TextButton.styleFrom(
