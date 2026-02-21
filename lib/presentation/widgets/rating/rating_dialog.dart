@@ -19,6 +19,7 @@ class RatingDialog extends StatefulWidget {
 class _RatingDialogState extends State<RatingDialog> {
   int _selectedRating = 0;
   final _reviewController = TextEditingController();
+  String? _reviewError;
 
   @override
   void dispose() {
@@ -38,11 +39,11 @@ class _RatingDialogState extends State<RatingDialog> {
             const SnackBar(content: Text('Rating submitted successfully!')),
           );
         } else if (state.status == RatingStatus.failure) {
+          final msg = _beautifyError(
+            state.errorMessage ?? 'Failed to submit rating',
+          );
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage ?? 'Failed to submit rating'),
-              backgroundColor: Colors.red,
-            ),
+            SnackBar(content: Text(msg), backgroundColor: Colors.red),
           );
         }
       },
@@ -114,12 +115,18 @@ class _RatingDialogState extends State<RatingDialog> {
                     enabled: !isSubmitting,
                     maxLines: 3,
                     decoration: InputDecoration(
-                      hintText: 'Write your review (optional)',
+                      hintText: 'Write your review',
+                      errorText: _reviewError,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       contentPadding: const EdgeInsets.all(12),
                     ),
+                    onChanged: (_) {
+                      if (_reviewError != null) {
+                        setState(() => _reviewError = null);
+                      }
+                    },
                   ),
                   const SizedBox(height: 24),
 
@@ -146,14 +153,18 @@ class _RatingDialogState extends State<RatingDialog> {
                           onPressed: _selectedRating == 0 || isSubmitting
                               ? null
                               : () {
+                                  final review = _reviewController.text.trim();
+                                  if (review.isEmpty) {
+                                    setState(() {
+                                      _reviewError = 'Review is required';
+                                    });
+                                    return;
+                                  }
                                   context.read<RatingBloc>().add(
                                     RatingSubmitRequested(
                                       foodId: widget.foodId,
                                       rating: _selectedRating,
-                                      review:
-                                          _reviewController.text.trim().isEmpty
-                                          ? null
-                                          : _reviewController.text.trim(),
+                                      review: review,
                                     ),
                                   );
                                 },
@@ -203,5 +214,20 @@ class _RatingDialogState extends State<RatingDialog> {
       default:
         return '';
     }
+  }
+
+  String _beautifyError(String raw) {
+    final lower = raw.toLowerCase();
+    if (lower.contains('already') && lower.contains('rated')) {
+      return 'You have already rated this food.';
+    }
+    if (lower.contains('socketexception') || lower.contains('connection')) {
+      return 'No internet connection. Please check your network.';
+    }
+    if (lower.contains('timeout')) {
+      return 'Request timed out. Please try again.';
+    }
+    final cleaned = raw.replaceFirst(RegExp(r'^Exception:\s*'), '');
+    return cleaned.isNotEmpty ? cleaned : 'Failed to submit rating.';
   }
 }

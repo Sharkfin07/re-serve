@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:re_serve/core/utils/formatters.dart';
 import 'package:re_serve/data/models/cart_model.dart';
 import 'package:re_serve/data/models/payment_model.dart';
 import 'package:re_serve/presentation/bloc/cart/cart_bloc.dart';
@@ -194,7 +195,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             ),
                           ),
                           Text(
-                            'Rp ${widget.totalPrice}',
+                            Formatters.currency(widget.totalPrice),
                             style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -342,7 +343,7 @@ class _OrderItemTile extends StatelessWidget {
             ),
           ),
           Text(
-            'Rp ${price * cartItem.quantity}',
+            Formatters.currency(price * cartItem.quantity),
             style: TextStyle(
               fontWeight: FontWeight.w600,
               color: theme.colorScheme.onSurface,
