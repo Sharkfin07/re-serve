@@ -7,9 +7,13 @@ import 'package:re_serve/presentation/bloc/food/food_state.dart';
 import 'package:re_serve/presentation/bloc/cart/cart_bloc.dart';
 import 'package:re_serve/presentation/bloc/cart/cart_event.dart';
 import 'package:re_serve/presentation/bloc/rating/rating_bloc.dart';
+import 'package:re_serve/presentation/bloc/rating/rating_event.dart';
+import 'package:re_serve/presentation/bloc/rating/rating_state.dart';
 import 'package:re_serve/presentation/screen/cart/cart_screen.dart';
 import 'package:re_serve/presentation/widgets/rating/rating_dialog.dart';
 import 'package:re_serve/data/models/food_model.dart';
+import 'package:re_serve/data/models/rating_model.dart';
+import 'package:re_serve/core/utils/formatters.dart';
 
 class FoodDetailScreen extends StatefulWidget {
   final String foodId;
@@ -25,6 +29,7 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
   void initState() {
     super.initState();
     context.read<FoodBloc>().add(FoodDetailFetchRequested(widget.foodId));
+    context.read<RatingBloc>().add(RatingFetchRequested(widget.foodId));
   }
 
   @override
@@ -138,19 +143,6 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
                           ),
                           Row(
                             children: [
-                              CircleAvatar(
-                                backgroundColor: Colors.white,
-                                child: IconButton(
-                                  icon: const Icon(
-                                    Icons.notifications_outlined,
-                                    color: Colors.black,
-                                  ),
-                                  onPressed: () {
-                                    // TODO: Navigate to notifications
-                                  },
-                                ),
-                              ),
-                              const SizedBox(width: 8),
                               CircleAvatar(
                                 backgroundColor: Colors.white,
                                 child: IconButton(
@@ -284,46 +276,122 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
                         ),
                       ),
                       const SizedBox(height: 24),
-
-                      // Rate this food button
-                      OutlinedButton.icon(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (_) => MultiBlocProvider(
-                              providers: [
-                                BlocProvider.value(
-                                  value: context.read<RatingBloc>(),
-                                ),
-                                BlocProvider.value(
-                                  value: context.read<FoodBloc>(),
-                                ),
-                              ],
-                              child: RatingDialog(
-                                foodId: food.id,
-                                foodName: food.name,
-                              ),
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.star_outline),
-                        label: const Text('Rate this food'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: const Color(0xFFE74C3C),
-                          side: const BorderSide(color: Color(0xFFE74C3C)),
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 12,
-                            horizontal: 24,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 100), // Space for buttons
+                      Divider(color: Colors.black12),
                     ],
                   ),
                 ),
+              ),
+            ),
+
+            // Reviews Section
+            SliverToBoxAdapter(
+              child: BlocBuilder<RatingBloc, RatingState>(
+                builder: (context, ratingState) {
+                  return Container(
+                    color: theme.colorScheme.surface,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 24),
+                        Row(
+                          children: [
+                            const Icon(Icons.reviews_outlined, size: 22),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Reviews',
+                              style: theme.textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            if (ratingState.status == RatingStatus.success)
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8),
+                                child: Text(
+                                  '(${ratingState.ratings.length})',
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    color: theme.colorScheme.onSurface
+                                        .withValues(alpha: 0.5),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        // Rate this food button
+                        OutlinedButton.icon(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (_) => MultiBlocProvider(
+                                providers: [
+                                  BlocProvider.value(
+                                    value: context.read<RatingBloc>(),
+                                  ),
+                                  BlocProvider.value(
+                                    value: context.read<FoodBloc>(),
+                                  ),
+                                ],
+                                child: RatingDialog(
+                                  foodId: food.id,
+                                  foodName: food.name,
+                                ),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.star_outline),
+                          label: const Text('Rate this food'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: const Color(0xFFE74C3C),
+                            side: const BorderSide(color: Color(0xFFE74C3C)),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 12,
+                              horizontal: 24,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        if (ratingState.status == RatingStatus.loading)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 24),
+                            child: Center(child: CircularProgressIndicator()),
+                          )
+                        else if (ratingState.ratings.isEmpty)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 24),
+                            child: Center(
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    Icons.rate_review_outlined,
+                                    size: 48,
+                                    color: theme.colorScheme.onSurface
+                                        .withValues(alpha: 0.3),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'No reviews yet. Be the first!',
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      color: theme.colorScheme.onSurface
+                                          .withValues(alpha: 0.5),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        else
+                          ...ratingState.ratings.map(
+                            (r) => _buildReviewCard(theme, r),
+                          ),
+                        const SizedBox(height: 100), // Space for bottom buttons
+                      ],
+                    ),
+                  );
+                },
               ),
             ),
           ],
@@ -407,6 +475,80 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildReviewCard(ThemeData theme, RatingModel r) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(8, 0, 0, 0),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 18,
+                backgroundColor: const Color(
+                  0xFFFF6B6B,
+                ).withValues(alpha: 0.15),
+                child: const Icon(
+                  Icons.person,
+                  size: 20,
+                  color: Color(0xFFFF6B6B),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'User',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    if (r.createdAt != null)
+                      Text(
+                        Formatters.dateTime(r.createdAt!),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.5,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: List.generate(5, (index) {
+                  return Icon(
+                    index < r.rating ? Icons.star : Icons.star_border,
+                    color: const Color(0xFFFF6B6B),
+                    size: 18,
+                  );
+                }),
+              ),
+            ],
+          ),
+          if (r.review != null && r.review!.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Text(
+              r.review!,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                height: 1.5,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }
