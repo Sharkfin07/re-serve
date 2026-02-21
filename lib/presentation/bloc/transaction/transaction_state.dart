@@ -8,14 +8,14 @@ class TransactionState extends Equatable {
   final TransactionStatus status;
   final List<PaymentModel> paymentMethods;
   final List<TransactionModel> transactions;
-  final TransactionModel? lastCreatedTransaction;
+  final bool transactionCreated;
   final String? errorMessage;
 
   const TransactionState({
     this.status = TransactionStatus.initial,
     this.paymentMethods = const [],
     this.transactions = const [],
-    this.lastCreatedTransaction,
+    this.transactionCreated = false,
     this.errorMessage,
   });
 
@@ -23,15 +23,14 @@ class TransactionState extends Equatable {
     TransactionStatus? status,
     List<PaymentModel>? paymentMethods,
     List<TransactionModel>? transactions,
-    TransactionModel? lastCreatedTransaction,
+    bool? transactionCreated,
     String? errorMessage,
   }) {
     return TransactionState(
       status: status ?? this.status,
       paymentMethods: paymentMethods ?? this.paymentMethods,
       transactions: transactions ?? this.transactions,
-      lastCreatedTransaction:
-          lastCreatedTransaction ?? this.lastCreatedTransaction,
+      transactionCreated: transactionCreated ?? false,
       errorMessage: errorMessage,
     );
   }
@@ -41,7 +40,7 @@ class TransactionState extends Equatable {
     status,
     paymentMethods,
     transactions,
-    lastCreatedTransaction,
+    transactionCreated,
     errorMessage,
   ];
 }

@@ -16,7 +16,7 @@ class TransactionRepository {
   Future<List<TransactionModel>> getAllTransactions() =>
       _service.getAllTransactions();
 
-  Future<TransactionModel> createTransaction({
+  Future<void> createTransaction({
     required List<String> cartIds,
     required String paymentMethodId,
   }) => _service.createTransaction(

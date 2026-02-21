@@ -49,14 +49,14 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
   ) async {
     emit(state.copyWith(status: TransactionStatus.loading, errorMessage: null));
     try {
-      final transaction = await _transactionRepository.createTransaction(
+      await _transactionRepository.createTransaction(
         cartIds: event.cartIds,
         paymentMethodId: event.paymentMethodId,
       );
       emit(
         state.copyWith(
           status: TransactionStatus.success,
-          lastCreatedTransaction: transaction,
+          transactionCreated: true,
         ),
       );
     } catch (e) {

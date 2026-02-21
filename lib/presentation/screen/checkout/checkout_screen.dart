@@ -58,17 +58,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       body: BlocConsumer<TransactionBloc, TransactionState>(
         listener: (context, state) {
           if (state.status == TransactionStatus.success &&
-              state.lastCreatedTransaction != null) {
+              state.transactionCreated) {
             // Clear cart after successful transaction
             context.read<CartBloc>().add(const CartFetchRequested());
 
             ScaffoldMessenger.of(context)
               ..clearSnackBars()
               ..showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Order placed! Invoice: ${state.lastCreatedTransaction!.invoiceId}',
-                  ),
+                const SnackBar(
+                  content: Text('Order placed successfully!'),
                   backgroundColor: Colors.green,
                 ),
               );
@@ -396,7 +394,8 @@ class _PaymentMethodTile extends StatelessWidget {
                   width: 40,
                   height: 40,
                   fit: BoxFit.contain,
-                  placeholder: (context, url) => const SizedBox(width: 40, height: 40),
+                  placeholder: (context, url) =>
+                      const SizedBox(width: 40, height: 40),
                   errorWidget: (context, url, error) =>
                       const Icon(Icons.payment, size: 28),
                 ),
