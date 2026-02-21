@@ -1,5 +1,7 @@
 # Re-Serve
 
+<img width="1920" height="1080" alt="re-serve-header" src="https://github.com/user-attachments/assets/6abf2a0d-8720-4cf3-92ac-f4258babb12b" />
+
 Re-Serve is a mobile application that connects surplus, still-edible food from vendors with people who need affordable meals. By allowing businesses to offer excess menu items at discounted prices, Re-Serve helps reduce food waste while making quality food more accessible to the community. Designed to be as intuitive as mainstream food delivery platforms, the app promotes sustainable consumption and supports a more responsible food ecosystem.
 
 ## Features
@@ -66,7 +68,7 @@ flutter run
 
 ## Demo
 
-https://github.com/user-attachments/assets/edcf8181-1d10-47c5-981b-73ec8e66b3ff
+https://github.com/user-attachments/assets/ffc87ad6-072a-4119-a25c-3fe70d329141
 
 ## Notes
 
