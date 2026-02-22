@@ -20,7 +20,6 @@ Re-Serve is a mobile application that connects surplus, still-edible food from v
 - State management: `flutter_bloc`
 - Networking: `dio`
 - Secure storage: `flutter_secure_storage`
-- Animation: `lottie`
 - Env config: `flutter_dotenv`
 - Images: `cached_network_image`
 - Formatting: `intl`
